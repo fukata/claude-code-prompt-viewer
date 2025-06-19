@@ -150,6 +150,7 @@ async function loadMessages(projectId, sessionId) {
         // 検索入力をリセット（フィルター設定は保持）
         document.getElementById('searchInput').value = '';
         
+        // 初回ロード時もフィルター設定を適用
         filterAndDisplayMessages();
     } catch (error) {
         console.error('Failed to load messages:', error);
@@ -413,8 +414,14 @@ function saveFilterSettings() {
 }
 
 function loadFilterSettings() {
-    const hideToolMessages = localStorage.getItem('hideToolMessages') === 'true';
-    const hideCommandDetails = localStorage.getItem('hideCommandDetails') === 'true';
+    // デフォルトはtrue（非表示）に設定
+    const hideToolMessages = localStorage.getItem('hideToolMessages') !== null 
+        ? localStorage.getItem('hideToolMessages') === 'true' 
+        : true;
+    const hideCommandDetails = localStorage.getItem('hideCommandDetails') !== null
+        ? localStorage.getItem('hideCommandDetails') === 'true'
+        : true;
+    
     document.getElementById('hideToolMessages').checked = hideToolMessages;
     document.getElementById('hideCommandDetails').checked = hideCommandDetails;
 }
