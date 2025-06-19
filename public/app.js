@@ -426,6 +426,23 @@ function updateSessionTitle() {
     }
 }
 
+// プロジェクトパネルの折りたたみ/展開
+function toggleProjectPanel() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('collapsed');
+}
+
+function collapseProjectPanel() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.add('collapsed');
+}
+
+function expandProjectPanel() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.remove('collapsed');
+}
+
+
 // テーマ管理
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -477,6 +494,9 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // テーマ切り替えボタン
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    
+    // プロジェクトヘッダーのクリックイベント
+    document.getElementById('projectHeader').addEventListener('click', toggleProjectPanel);
     
     // セッションヘッダーのクリックイベント
     document.getElementById('sessionHeader').addEventListener('click', toggleSessionPanel);
