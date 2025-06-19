@@ -147,9 +147,8 @@ async function loadMessages(projectId, sessionId) {
         const response = await fetch(`/api/project/${projectId}/session/${sessionId}`);
         allMessages = await response.json();
         
-        // 初期化：検索とフィルターをリセット
+        // 検索入力をリセット（フィルター設定は保持）
         document.getElementById('searchInput').value = '';
-        document.getElementById('hideToolMessages').checked = false;
         
         filterAndDisplayMessages();
     } catch (error) {
@@ -318,8 +317,48 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// テーマ管理
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+    const icon = document.querySelector('.theme-icon');
+    icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+
+// フィルター設定の保存と復元
+function saveFilterSettings() {
+    localStorage.setItem('hideToolMessages', document.getElementById('hideToolMessages').checked);
+}
+
+function loadFilterSettings() {
+    const hideToolMessages = localStorage.getItem('hideToolMessages') === 'true';
+    document.getElementById('hideToolMessages').checked = hideToolMessages;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
+    // テーマ初期化
+    initTheme();
+    
+    // フィルター設定を復元
+    loadFilterSettings();
+    
     loadProjects();
+    
+    // テーマ切り替えボタン
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
     
     // 検索とフィルターのイベントリスナー
     document.getElementById('searchInput').addEventListener('input', () => {
@@ -329,6 +368,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     
     document.getElementById('hideToolMessages').addEventListener('change', () => {
+        saveFilterSettings();
         if (allMessages.length > 0) {
             filterAndDisplayMessages();
         }
