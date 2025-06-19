@@ -18,6 +18,17 @@ function sanitizePathName(pathName) {
   return pathName.replace(/\//g, '-').replace(/^-/, '');
 }
 
+async function getFirstLine(filePath) {
+  try {
+    const content = await fs.readFile(filePath, 'utf8');
+    const firstLine = content.split('\n')[0];
+    return firstLine || null;
+  } catch (error) {
+    console.error('Error reading first line:', error.message);
+    return null;
+  }
+}
+
 app.get('/api/projects', async (req, res) => {
   try {
     const projectDirs = await fs.readdir(PROJECTS_DIR);
@@ -59,6 +70,7 @@ app.get('/api/project/:projectId/sessions', async (req, res) => {
         const sessionId = file.replace('.jsonl', '');
         
         const firstLine = await getFirstLine(filePath);
+        
         let sessionInfo = {
           id: sessionId,
           file: file,
@@ -72,10 +84,10 @@ app.get('/api/project/:projectId/sessions', async (req, res) => {
             sessionInfo.startTime = data.timestamp;
             sessionInfo.cwd = data.cwd;
           } catch (e) {
-            console.error('Error parsing first line:', e);
+            console.error(`Error parsing first line for session ${sessionId}:`, e);
+            console.error('First line content:', firstLine);
           }
         }
-        
         sessions.push(sessionInfo);
       }
     }
@@ -121,24 +133,6 @@ app.get('/api/project/:projectId/session/:sessionId', async (req, res) => {
   }
 });
 
-function getFirstLine(filePath) {
-  return new Promise((resolve, reject) => {
-    const stream = createReadStream(filePath);
-    const rl = readline.createInterface({
-      input: stream,
-      crlfDelay: Infinity
-    });
-    
-    rl.on('line', (line) => {
-      rl.close();
-      stream.destroy();
-      resolve(line);
-    });
-    
-    rl.on('error', reject);
-    rl.on('close', () => resolve(null));
-  });
-}
 
 app.listen(PORT, () => {
   console.log(`Claude Code Prompt Viewer is running at http://localhost:${PORT}`);

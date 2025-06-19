@@ -69,6 +69,7 @@ async function loadSessions(projectId, sessionIdToSelect = null) {
     try {
         const response = await fetch(`/api/project/${projectId}/sessions`);
         const sessions = await response.json();
+        console.log('Sessions loaded:', sessions);
         
         const sessionList = document.getElementById('sessionList');
         sessionList.innerHTML = '';
