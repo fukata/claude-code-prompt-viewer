@@ -5,13 +5,16 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node src/server.js"
+    "dev": "nodemon src/server.js --watch src --watch public"
   },
   "keywords": ["claude", "viewer", "offline"],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   },
   "engines": {
     "node": ">=14.0.0"
