@@ -160,8 +160,14 @@ async function loadMessages(projectId, sessionId) {
 function filterAndDisplayMessages() {
     const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
     const hideToolMessages = document.getElementById('hideToolMessages').checked;
+    const timeFilter = document.getElementById('timeFilter').value;
     
     filteredMessages = allMessages.filter(msg => {
+        // 時間フィルタリング
+        if (timeFilter && !isWithinTimeRange(msg.timestamp, timeFilter)) {
+            return false;
+        }
+        
         // ツール関連メッセージを非表示にする場合のフィルタリング
         if (hideToolMessages) {
             // ツール結果メッセージを除外
@@ -192,6 +198,46 @@ function filterAndDisplayMessages() {
     });
     
     displayMessages(filteredMessages);
+}
+
+function isWithinTimeRange(timestamp, timeFilter) {
+    const messageTime = new Date(timestamp);
+    const now = new Date();
+    
+    if (timeFilter === 'custom') {
+        const startDate = document.getElementById('startDate').value;
+        const startTime = document.getElementById('startTimeInput').value;
+        const endDate = document.getElementById('endDate').value;
+        const endTime = document.getElementById('endTimeInput').value;
+        
+        if (startDate && startTime) {
+            const startDateTime = new Date(`${startDate}T${startTime}`);
+            if (messageTime < startDateTime) return false;
+        }
+        
+        if (endDate && endTime) {
+            const endDateTime = new Date(`${endDate}T${endTime}`);
+            if (messageTime > endDateTime) return false;
+        }
+        
+        return true;
+    }
+    
+    // 相対的な時間範囲
+    const timeRanges = {
+        '1h': 60 * 60 * 1000,
+        '6h': 6 * 60 * 60 * 1000,
+        '24h': 24 * 60 * 60 * 1000,
+        '7d': 7 * 24 * 60 * 60 * 1000,
+        '30d': 30 * 24 * 60 * 60 * 1000
+    };
+    
+    const range = timeRanges[timeFilter];
+    if (range) {
+        return (now - messageTime) <= range;
+    }
+    
+    return true;
 }
 
 function getMessageText(msg) {
@@ -373,4 +419,51 @@ window.addEventListener('DOMContentLoaded', () => {
             filterAndDisplayMessages();
         }
     });
+    
+    // 時間フィルターのイベントリスナー
+    document.getElementById('timeFilter').addEventListener('change', (e) => {
+        const customRange = document.getElementById('customTimeRange');
+        if (e.target.value === 'custom') {
+            customRange.style.display = 'flex';
+            // 現在時刻をデフォルト値として設定
+            const now = new Date();
+            const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            
+            document.getElementById('startDate').value = formatDate(yesterday);
+            document.getElementById('startTimeInput').value = formatTime(yesterday);
+            document.getElementById('endDate').value = formatDate(now);
+            document.getElementById('endTimeInput').value = formatTime(now);
+        } else {
+            customRange.style.display = 'none';
+        }
+        
+        if (allMessages.length > 0) {
+            filterAndDisplayMessages();
+        }
+    });
+    
+    // カスタム時間範囲のイベントリスナー
+    ['startDate', 'startTimeInput', 'endDate', 'endTimeInput'].forEach(id => {
+        document.getElementById(id).addEventListener('change', () => {
+            if (allMessages.length > 0 && document.getElementById('timeFilter').value === 'custom') {
+                filterAndDisplayMessages();
+            }
+        });
+    });
 });
+
+// 日付をYYYY-MM-DD形式にフォーマット
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// 時刻をHH:MM:SS形式にフォーマット（24時間表記）
+function formatTime(date) {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}

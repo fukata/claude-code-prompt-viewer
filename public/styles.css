@@ -235,6 +235,7 @@ h1 {
     display: flex;
     gap: 1rem;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .search-input {
@@ -358,4 +359,55 @@ h1 {
     color: var(--text-tertiary);
     padding: 2rem;
     font-size: 1.1rem;
+}
+
+.time-filter {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.time-filter-select {
+    padding: 0.5rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.custom-time-range {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.datetime-group {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.date-input, .time-input-small {
+    padding: 0.5rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.date-input {
+    min-width: 140px;
+}
+
+.time-input-small {
+    min-width: 120px;
+}
+
+.custom-time-range span {
+    color: var(--text-secondary);
 }

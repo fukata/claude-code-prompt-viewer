@@ -39,6 +39,28 @@
                                 <input type="checkbox" id="hideToolMessages" class="hide-tool-checkbox">
                                 ツール関連を非表示
                             </label>
+                            <div class="time-filter">
+                                <select id="timeFilter" class="time-filter-select">
+                                    <option value="">全期間</option>
+                                    <option value="1h">過去1時間</option>
+                                    <option value="6h">過去6時間</option>
+                                    <option value="24h">過去24時間</option>
+                                    <option value="7d">過去7日間</option>
+                                    <option value="30d">過去30日間</option>
+                                    <option value="custom">期間指定...</option>
+                                </select>
+                                <div id="customTimeRange" class="custom-time-range" style="display: none;">
+                                    <div class="datetime-group">
+                                        <input type="date" id="startDate" class="date-input">
+                                        <input type="time" id="startTimeInput" class="time-input-small" step="1">
+                                    </div>
+                                    <span>〜</span>
+                                    <div class="datetime-group">
+                                        <input type="date" id="endDate" class="date-input">
+                                        <input type="time" id="endTimeInput" class="time-input-small" step="1">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div id="messageList" class="message-list">
