@@ -164,11 +164,41 @@ h1 {
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-.session-panel h2 {
+.session-header {
     padding: 1rem;
     font-size: 1.1rem;
     color: var(--text-secondary);
     border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.session-header:hover {
+    background-color: var(--hover-bg);
+}
+
+.toggle-icon {
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+}
+
+.session-panel.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.session-list-container {
+    max-height: 300px;
+    overflow-y: auto;
+    transition: max-height 0.3s ease;
+}
+
+.session-panel.collapsed .session-list-container {
+    max-height: 0;
+    overflow: hidden;
 }
 
 .session-list {

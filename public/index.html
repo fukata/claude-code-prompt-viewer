@@ -25,9 +25,14 @@
             
             <section class="content">
                 <div id="sessionPanel" class="session-panel" style="display: none;">
-                    <h2>セッション一覧</h2>
-                    <ul id="sessionList" class="session-list">
-                    </ul>
+                    <h2 id="sessionHeader" class="session-header">
+                        <span class="toggle-icon">▼</span>
+                        <span id="sessionTitle">セッション一覧</span>
+                    </h2>
+                    <div id="sessionListContainer" class="session-list-container">
+                        <ul id="sessionList" class="session-list">
+                        </ul>
+                    </div>
                 </div>
                 
                 <div id="messagePanel" class="message-panel" style="display: none;">

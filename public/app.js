@@ -49,6 +49,7 @@ async function loadProjects() {
 
 async function selectProject(project) {
     currentProject = project;
+    currentSession = null; // セッションをリセット
     
     document.querySelectorAll('.project-item').forEach(item => {
         item.classList.remove('active');
@@ -58,6 +59,10 @@ async function selectProject(project) {
     document.getElementById('welcomePanel').style.display = 'none';
     document.getElementById('sessionPanel').style.display = 'block';
     document.getElementById('messagePanel').style.display = 'none';
+    
+    // セッションパネルを展開
+    expandSessionPanel();
+    updateSessionTitle();
     
     // URLを更新
     updateURL();
@@ -102,6 +107,9 @@ async function loadSessions(projectId, sessionIdToSelect = null) {
                     sessionElement.classList.add('active');
                     currentSession = sessionToSelect;
                     document.getElementById('messagePanel').style.display = 'block';
+                    // セッションパネルを折りたたむ
+                    collapseSessionPanel();
+                    updateSessionTitle();
                     await loadMessages(projectId, sessionIdToSelect);
                 }
             }
@@ -121,6 +129,12 @@ async function selectSession(projectId, session) {
     event.currentTarget.classList.add('active');
     
     document.getElementById('messagePanel').style.display = 'block';
+    
+    // セッションパネルを折りたたむ
+    collapseSessionPanel();
+    
+    // セッションタイトルを更新
+    updateSessionTitle();
     
     // URLを更新
     updateURL();
@@ -387,6 +401,31 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// セッションパネルの折りたたみ/展開
+function toggleSessionPanel() {
+    const sessionPanel = document.getElementById('sessionPanel');
+    sessionPanel.classList.toggle('collapsed');
+}
+
+function collapseSessionPanel() {
+    const sessionPanel = document.getElementById('sessionPanel');
+    sessionPanel.classList.add('collapsed');
+}
+
+function expandSessionPanel() {
+    const sessionPanel = document.getElementById('sessionPanel');
+    sessionPanel.classList.remove('collapsed');
+}
+
+function updateSessionTitle() {
+    const sessionTitle = document.getElementById('sessionTitle');
+    if (currentSession) {
+        sessionTitle.textContent = `セッション一覧（${currentSession.id.substring(0, 8)}...）`;
+    } else {
+        sessionTitle.textContent = 'セッション一覧';
+    }
+}
+
 // テーマ管理
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
@@ -438,6 +477,9 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // テーマ切り替えボタン
     document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    
+    // セッションヘッダーのクリックイベント
+    document.getElementById('sessionHeader').addEventListener('click', toggleSessionPanel);
     
     // 検索とフィルターのイベントリスナー
     document.getElementById('searchInput').addEventListener('input', () => {
