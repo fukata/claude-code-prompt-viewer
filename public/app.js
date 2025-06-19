@@ -160,7 +160,23 @@ async function loadMessages(projectId, sessionId) {
 function filterAndDisplayMessages() {
     const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
     const hideToolMessages = document.getElementById('hideToolMessages').checked;
+    const hideCommandDetails = document.getElementById('hideCommandDetails').checked;
     const timeFilter = document.getElementById('timeFilter').value;
+    
+    // カスタムコマンドの後のメッセージを識別
+    const commandDetailMessages = new Set();
+    for (let i = 0; i < allMessages.length - 1; i++) {
+        const msg = allMessages[i];
+        if (msg.type === 'user' && typeof msg.message.content === 'string') {
+            if (msg.message.content.includes('<command-message>') && 
+                msg.message.content.includes('<command-name>')) {
+                // 次のメッセージをカスタムコマンドの詳細として記録
+                if (i + 1 < allMessages.length) {
+                    commandDetailMessages.add(allMessages[i + 1]);
+                }
+            }
+        }
+    }
     
     filteredMessages = allMessages.filter(msg => {
         // 時間フィルタリング
@@ -168,7 +184,7 @@ function filterAndDisplayMessages() {
             return false;
         }
         
-        // ツール関連メッセージを非表示にする場合のフィルタリング
+        // ツール呼び出しを完全に非表示にする場合のフィルタリング
         if (hideToolMessages) {
             // ツール結果メッセージを除外
             if (msg.toolUseResult) return false;
@@ -186,6 +202,12 @@ function filterAndDisplayMessages() {
                 );
                 if (hasToolResult) return false;
             }
+        }
+        
+        // カスタムコマンドの詳細を非表示にする場合のフィルタリング
+        if (hideCommandDetails) {
+            // カスタムコマンドの詳細メッセージを除外
+            if (commandDetailMessages.has(msg)) return false;
         }
         
         // キーワード検索フィルタリング
@@ -387,11 +409,14 @@ function updateThemeIcon(theme) {
 // フィルター設定の保存と復元
 function saveFilterSettings() {
     localStorage.setItem('hideToolMessages', document.getElementById('hideToolMessages').checked);
+    localStorage.setItem('hideCommandDetails', document.getElementById('hideCommandDetails').checked);
 }
 
 function loadFilterSettings() {
     const hideToolMessages = localStorage.getItem('hideToolMessages') === 'true';
+    const hideCommandDetails = localStorage.getItem('hideCommandDetails') === 'true';
     document.getElementById('hideToolMessages').checked = hideToolMessages;
+    document.getElementById('hideCommandDetails').checked = hideCommandDetails;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -414,6 +439,13 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     
     document.getElementById('hideToolMessages').addEventListener('change', () => {
+        saveFilterSettings();
+        if (allMessages.length > 0) {
+            filterAndDisplayMessages();
+        }
+    });
+    
+    document.getElementById('hideCommandDetails').addEventListener('change', () => {
         saveFilterSettings();
         if (allMessages.length > 0) {
             filterAndDisplayMessages();
