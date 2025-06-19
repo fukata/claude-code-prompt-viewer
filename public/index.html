@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Prompt Viewer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Claude Code Prompt Viewer</h1>
+        </header>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <h2>プロジェクト一覧</h2>
+                <ul id="projectList" class="project-list">
+                    <li>読み込み中...</li>
+                </ul>
+            </aside>
+            
+            <section class="content">
+                <div id="sessionPanel" class="session-panel" style="display: none;">
+                    <h2>セッション一覧</h2>
+                    <ul id="sessionList" class="session-list">
+                    </ul>
+                </div>
+                
+                <div id="messagePanel" class="message-panel" style="display: none;">
+                    <div class="message-panel-header">
+                        <h2>メッセージ</h2>
+                        <div class="message-controls">
+                            <input type="text" id="searchInput" class="search-input" placeholder="キーワード検索...">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="hideToolMessages" class="hide-tool-checkbox">
+                                ツール関連を非表示
+                            </label>
+                        </div>
+                    </div>
+                    <div id="messageList" class="message-list">
+                    </div>
+                </div>
+                
+                <div id="welcomePanel" class="welcome-panel">
+                    <p>プロジェクトを選択してください</p>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
